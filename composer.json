@@ -1,0 +1,22 @@
+{
+    "name": "tripklik/blue-ribbon-bags",
+    "description": "Laravel package for Blue Ribbon Bags API integration, powered by Tripklik",
+    "type": "library",
+    "require": {
+        "php": "^8.1",
+        "guzzlehttp/guzzle": "^7.0",
+        "illuminate/support": "^9.0|^10.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tripklik\\BlueRibbonBags\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Tripklik\\BlueRibbonBags\\BlueRibbonBagsServiceProvider"
+            ]
+        }
+    }
+}
