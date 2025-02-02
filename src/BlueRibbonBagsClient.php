@@ -3,10 +3,12 @@
 namespace Tripklik\BlueRibbonBags;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Tripklik\BlueRibbonBags\Data\Currency;
 use Tripklik\BlueRibbonBags\Data\Product;
 use Tripklik\BlueRibbonBags\Purchase\Request\PurchaseRequest;
 use Tripklik\BlueRibbonBags\Purchase\Response\PurchaseResponse;
+use Illuminate\Support\Collection;
 
 class BlueRibbonBagsClient
 {
@@ -19,32 +21,61 @@ class BlueRibbonBagsClient
         $this->client = new Client([
             'base_uri' => $this->baseUrl,
             'headers' => [
-                'Authorization' => "Bearer {$this->authToken}",
-                'Accept' => 'application/json',
+                'Authorization' => "Bearer $this->authToken",
+                'Content-Type' => 'application/json',
             ],
         ]);
     }
 
-    public function getProducts(string $currencyCode): array
+    /**
+     * Get available products for a specific currency using POST method
+     *
+     * @param string|null $currencyCode
+     * @return Collection
+     * @throws GuzzleException
+     */
+    public function getProducts(string $currencyCode = null): Collection
     {
-        $response = $this->client->get('/api/products', [
-            'query' => ['currencyCode' => $currencyCode],
+        $payload = [];
+
+        if (!is_null($currencyCode)) {
+            $payload['CurrencyCode'] = $currencyCode;
+        }
+
+        $response = $this->client->post('Data/GetProductList', [
+            'json' => $payload,
         ]);
 
         $data = json_decode($response->getBody()->getContents(), true);
-        return array_map(fn (array $product) => Product::fromArray($product), $data);
+        return collect($data['Data'])->map(fn ($product) => Product::fromArray($product));
     }
 
-    public function getCurrencies(): array
+    /**
+     * Get available currencies using POST method
+     *
+     * @return Collection
+     * @throws GuzzleException
+     */
+    public function getCurrencies(): Collection
     {
-        $response = $this->client->get('/api/currencies');
+        $response = $this->client->post('Data/GetAvailableCurrenciesList', [
+            'json' => [], // Empty payload for POST request
+        ]);
+
         $data = json_decode($response->getBody()->getContents(), true);
-        return array_map(fn (array $currency) => Currency::fromArray($currency), $data);
+        return collect($data['Data'])->map(fn ($currency) => Currency::fromArray($currency));
     }
 
+    /**
+     * Purchase service using POST method
+     *
+     * @param PurchaseRequest $request
+     * @return PurchaseResponse
+     * @throws GuzzleException
+     */
     public function purchaseService(PurchaseRequest $request): PurchaseResponse
     {
-        $response = $this->client->post('/api/purchase', [
+        $response = $this->client->post('Service/Purchase', [
             'json' => $request->toArray(),
         ]);
 
