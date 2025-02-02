@@ -7,9 +7,19 @@
         "guzzlehttp/guzzle": "^7.0",
         "illuminate/support": "^9.0|^10.0"
     },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0",
+        "orchestra/testbench": "^7.0|^8.0",
+        "mockery/mockery": "^1.5"
+    },
     "autoload": {
         "psr-4": {
             "Tripklik\\BlueRibbonBags\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tripklik\\BlueRibbonBags\\Tests\\": "tests/"
         }
     },
     "extra": {
@@ -18,5 +28,14 @@
                 "Tripklik\\BlueRibbonBags\\BlueRibbonBagsServiceProvider"
             ]
         }
-    }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
