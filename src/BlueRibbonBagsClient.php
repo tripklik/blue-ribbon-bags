@@ -31,7 +31,7 @@ class BlueRibbonBagsClient
      * Get available products for a specific currency using POST method
      *
      * @param string|null $currencyCode
-     * @return Collection
+     * @return Collection<Product>
      * @throws GuzzleException
      */
     public function getProducts(string $currencyCode = null): Collection

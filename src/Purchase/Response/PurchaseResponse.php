@@ -2,7 +2,9 @@
 
 namespace Tripklik\BlueRibbonBags\Purchase\Response;
 
-class PurchaseResponse
+use Illuminate\Contracts\Support\Arrayable;
+
+class PurchaseResponse implements Arrayable
 {
     public function __construct(
         public readonly string $serviceNumber,
@@ -25,5 +27,23 @@ class PurchaseResponse
             statusCode: $response['StatusCode'] ?? null,
             warnings: $response['Warnings'] ?? [],
         );
+    }
+
+    /**
+     * Convert the instance to an array.
+     *
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return [
+            'ServiceNumber' => $this->serviceNumber,
+            'TotalPrice' => $this->totalPrice,
+            'TotalCharge' => $this->totalCharge,
+            'Errors' => $this->errors,
+            'Status' => $this->status,
+            'StatusCode' => $this->statusCode,
+            'Warnings' => $this->warnings,
+        ];
     }
 }
