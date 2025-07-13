@@ -10,6 +10,8 @@ class PurchaseResponse implements Arrayable
         public readonly string $serviceNumber,
         public readonly float $totalPrice,
         public readonly float $totalCharge,
+        public readonly ?string $alternativeCurrencyCode,
+        public readonly ?float $alternativeCurrencyTotalCharge,
         public readonly array $errors,
         public readonly bool $status,
         public readonly ?string $statusCode,
@@ -18,10 +20,13 @@ class PurchaseResponse implements Arrayable
 
     public static function fromArray(array $response): self
     {
+
         return new self(
-            serviceNumber: $response['ServiceNumber'] ?? '',
-            totalPrice: (float) ($response['TotalPrice'] ?? 0),
-            totalCharge: (float) ($response['TotalCharge'] ?? 0),
+            serviceNumber: $response['Data']['ServiceNumber'] ?? '',
+            totalPrice: (float) ($response['Data']['TotalPrice'] ?? 0),
+            totalCharge: (float) ($response['Data']['TotalCharge'] ?? 0),
+            alternativeCurrencyCode:  $response['Data']['AlternativeCurrencyCode'] ?? null,
+            alternativeCurrencyTotalCharge: $response['Data']['AlternativeCurrencyTotalCharge'] ?? null,
             errors: $response['Errors'] ?? [],
             status: $response['Status'] ?? false,
             statusCode: $response['StatusCode'] ?? null,
@@ -36,14 +41,20 @@ class PurchaseResponse implements Arrayable
      */
     public function toArray(): array
     {
-        return [
+        $data = [
             'ServiceNumber' => $this->serviceNumber,
             'TotalPrice' => $this->totalPrice,
             'TotalCharge' => $this->totalCharge,
+            'AlternativeCurrencyCode' => $this->alternativeCurrencyCode,
+            'AlternativeCurrencyTotalCharge' => $this->alternativeCurrencyTotalCharge,
             'Errors' => $this->errors,
             'Status' => $this->status,
             'StatusCode' => $this->statusCode,
             'Warnings' => $this->warnings,
         ];
+
+        return array_filter($data, function ($value) {
+            return $value !== null && $value !== '';
+        });
     }
 }
