@@ -32,4 +32,20 @@ class Product
             productTypeCode: $data['ProductTypeCode'],
         );
     }
+
+    public function toArray(): array
+    {
+        return [
+            'ProductCode' => $this->productCode,
+            'ProductName' => $this->productName,
+            'ProductPrice' => $this->productPrice,
+            'CurrencyCode' => $this->currencyCode,
+            'CurrencyName' => $this->currencyName,
+            'BagCoverage' => $this->bagCoverage,
+            'CurrencySymbol' => $this->currencySymbol,
+            'AlternateCurrency' => $this->alternateCurrency,
+            'Caption' => $this->caption,
+            'ProductTypeCode' => $this->productTypeCode,
+        ];
+    }
 }
